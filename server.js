@@ -8,14 +8,19 @@ const PORT = process.env.PORT || 3000;
 // ── Env vars (set these in Railway dashboard) ──────────────────────────
 const ANTHROPIC_KEY  = process.env.ANTHROPIC_API_KEY;
 const ELEVENLABS_KEY = process.env.ELEVENLABS_API_KEY;
-const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*'; // set to your Railway frontend URL for extra security
+const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
 // ────────────────────────────────────────────────────────────────────────
 
 app.use(cors({ origin: ALLOWED_ORIGIN }));
 app.use(express.json({ limit: '1mb' }));
 
-// ── Health check ─────────────────────────────────────────────────────────
+// ── Serve the Sapo app at root ────────────────────────────────────────
 app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/amiguito-habla-FINAL.html');
+});
+
+// ── Health check ──────────────────────────────────────────────────────
+app.get('/health', (req, res) => {
   res.json({ status: '🐸 Sapo proxy running!', time: new Date().toISOString() });
 });
 
@@ -75,7 +80,6 @@ app.post('/api/tts/:voiceId', async (req, res) => {
       return res.status(response.status).json({ error: errText });
     }
 
-    // Stream the audio back
     res.set('Content-Type', 'audio/mpeg');
     res.set('Cache-Control', 'no-cache');
     response.body.pipe(res);
