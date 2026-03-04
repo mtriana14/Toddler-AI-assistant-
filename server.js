@@ -84,8 +84,10 @@ app.post('/api/tts/:voiceId', async (req, res) => {
       }
     );
 
+    console.log('ElevenLabs status:', response.status);
     if (!response.ok) {
       const errText = await response.text();
+      console.log('ElevenLabs error:', errText);
       return res.status(response.status).json({ error: errText });
     }
 
