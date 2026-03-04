@@ -3,304 +3,689 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>Roki 🐾</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap" rel="stylesheet">
+<title>¡Sapo! 🐸</title>
+<link href="https://fonts.googleapis.com/css2?family=Boogaloo&family=Baloo+2:wght@700;800;900&family=Schoolbell&display=swap" rel="stylesheet">
 <style>
-* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-html, body { width: 100vw; height: 100vh; overflow: hidden; touch-action: manipulation; }
-body {
-  font-family: 'Fredoka One', cursive;
-  background: #6AADDD;
-  background-image:
-    radial-gradient(ellipse at 50% 0%, #88C8EE 0%, transparent 55%),
-    radial-gradient(ellipse at 0% 100%, #4488BB 0%, transparent 50%),
-    radial-gradient(ellipse at 100% 100%, #4488BB 0%, transparent 50%);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: space-between;
-  padding: 14px 10px 18px;
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --papel: #FFF8E7;
+  --tinta: #1E1206;
+  --rojo: #E8332A;
+  --amarillo: #FFD03A;
+  --verde: #2D9E35;
+  --verde-claro: #4DC95A;
+  --azul: #1E7FBB;
+  --naranja: #F5821F;
+  --morado: #7B3FA0;
 }
+
+html, body {
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+body {
+  font-family: 'Baloo 2', cursive;
+  background: #2D9E35;
+  background-image:
+    radial-gradient(ellipse at 15% 15%, #FFD03A28 0%, transparent 45%),
+    radial-gradient(ellipse at 85% 85%, #E8332A18 0%, transparent 45%),
+    radial-gradient(ellipse at 50% 0%, #4DC95A40 0%, transparent 40%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 body::before {
   content: '';
   position: fixed; inset: 0;
-  background-image: radial-gradient(circle, #ffffff0c 2px, transparent 2px);
-  background-size: 32px 32px;
+  background-image: radial-gradient(circle, #ffffff12 1.5px, transparent 1.5px);
+  background-size: 28px 28px;
+  pointer-events: none; z-index: 0;
+}
+
+/* ===== LIBRO ===== */
+.libro {
+  width: min(98vw, 700px);
+  height: min(97vh, 840px);
+  background: var(--papel);
+  border-radius: 32px;
+  border: 5px solid var(--tinta);
+  box-shadow: 10px 10px 0 var(--tinta), inset 0 0 80px #FFE08812;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14px 16px 10px;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.libro::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='4' height='4' fill='%23FFF8E7'/%3E%3Crect width='1' height='1' fill='%23F0E8D0' opacity='0.6'/%3E%3Crect x='2' y='2' width='1' height='1' fill='%23E8DCC0' opacity='0.4'/%3E%3C/svg%3E");
+  border-radius: 28px; pointer-events: none; z-index: 0;
+}
+.libro::after {
+  content: '';
+  position: absolute; inset: 0;
+  background-image: repeating-linear-gradient(transparent, transparent 31px, #D4C9A818 32px);
+  border-radius: 28px; pointer-events: none; z-index: 0;
+}
+
+.esquina { position: absolute; font-size: 1.5rem; z-index: 1; pointer-events: none; opacity: 0.5; }
+.esquina.tl { top: 10px; left: 12px; transform: rotate(-20deg); }
+.esquina.tr { top: 10px; right: 12px; transform: rotate(20deg); }
+.esquina.bl { bottom: 10px; left: 12px; transform: rotate(15deg); }
+.esquina.br { bottom: 10px; right: 12px; transform: rotate(-15deg); }
+
+/* ===== TÍTULO ===== */
+.titulo-wrap {
+  position: relative; z-index: 2;
+  display: flex; align-items: center; justify-content: center;
+  width: 100%;
+}
+.titulo {
+  font-family: 'Boogaloo', cursive;
+  font-size: clamp(1.8rem, 5.5vw, 3rem);
+  color: var(--tinta);
+  padding: 5px 24px;
+  background: var(--amarillo);
+  border: 3.5px solid var(--tinta);
+  border-radius: 999px;
+  box-shadow: 4px 4px 0 var(--tinta);
+  transform: rotate(-1.2deg);
+  letter-spacing: 1px;
+}
+.deco-star {
+  position: absolute; font-size: 1.5rem;
+  animation: giraStar 4s linear infinite;
+  pointer-events: none; z-index: 2;
+}
+.deco-star.izq { left: 8px; top: 4px; }
+.deco-star.der { right: 8px; top: 4px; animation-direction: reverse; }
+@keyframes giraStar {
+  from { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.4); }
+  to   { transform: rotate(360deg) scale(1); }
+}
+
+/* ===== SAPO + BOCADILLO ===== */
+.sapo-zona {
+  position: relative; z-index: 2;
+  display: flex; align-items: flex-end; justify-content: center;
+  width: 100%; gap: 10px;
+}
+.sapo-svg {
+  width: clamp(88px, 20vw, 130px);
+  height: auto;
+  filter: drop-shadow(4px 6px 0 rgba(0,0,0,0.25));
+  flex-shrink: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+.sapo-svg.brinca  { animation: sapoSalta 1.8s ease-in-out infinite alternate; }
+.sapo-svg.escucha { animation: sapoOye 0.5s ease-in-out infinite; }
+.sapo-svg.habla   { animation: sapoHabla 0.28s ease-in-out infinite; }
+
+@keyframes sapoSalta { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-12px) rotate(3deg); } }
+@keyframes sapoOye   { 0%,100% { transform: scale(1) rotate(-5deg); } 50% { transform: scale(1.12) rotate(5deg); } }
+@keyframes sapoHabla { 0%,100% { transform: scaleY(1) translateY(0); } 50% { transform: scaleY(0.93) translateY(-5px); } }
+
+.bocadillo-wrap { flex: 1; position: relative; display: flex; align-items: center; }
+.bocadillo {
+  background: white;
+  border: 3.5px solid var(--tinta);
+  border-radius: 22px;
+  padding: 12px 16px;
+  position: relative;
+  box-shadow: 4px 4px 0 var(--tinta);
+  min-height: 68px;
+  display: flex; align-items: center; justify-content: center;
+  max-width: 400px; width: 100%;
+}
+.bocadillo::before {
+  content: ''; position: absolute;
+  left: -19px; bottom: 18px;
+  border: 11px solid transparent;
+  border-right-color: var(--tinta);
+}
+.bocadillo::after {
+  content: ''; position: absolute;
+  left: -11px; bottom: 20px;
+  border: 9px solid transparent;
+  border-right-color: white; z-index: 1;
+}
+.bocadillo-texto {
+  font-family: 'Baloo 2', cursive;
+  font-size: clamp(0.95rem, 2.6vw, 1.3rem);
+  font-weight: 700; color: var(--tinta);
+  text-align: center; line-height: 1.35;
+  position: relative; z-index: 2;
+}
+.bocadillo-texto.vacio {
+  font-family: 'Schoolbell', cursive;
+  color: #B0A090;
+  font-size: clamp(0.9rem, 2.3vw, 1.1rem);
+}
+
+/* Puntitos */
+.puntitos { display: inline-flex; gap: 7px; align-items: center; }
+.puntitos span {
+  width: 13px; height: 13px; border-radius: 50%;
+  border: 2.5px solid var(--tinta);
+  animation: puntoBrinca 0.9s ease-in-out infinite;
+}
+.puntitos span:nth-child(1) { background: var(--rojo); }
+.puntitos span:nth-child(2) { background: var(--amarillo); animation-delay: 0.2s; }
+.puntitos span:nth-child(3) { background: var(--azul); animation-delay: 0.4s; }
+@keyframes puntoBrinca { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+/* ===== TIRA ESCUCHO ===== */
+.tira-escucho {
+  z-index: 2; width: 88%;
+  background: var(--azul);
+  border: 3px solid var(--tinta); border-radius: 50px;
+  padding: 8px 20px; text-align: center;
+  font-family: 'Schoolbell', cursive;
+  font-size: clamp(0.82rem, 2vw, 1rem);
+  color: white; font-weight: 700;
+  box-shadow: 3px 3px 0 var(--tinta);
+  min-height: 36px; display: flex; align-items: center; justify-content: center;
+  transition: background 0.3s;
+}
+.tira-escucho.activa { background: var(--verde-claro); }
+.tira-escucho.error  { background: var(--rojo); }
+
+/* ===== BOTÓN ROJO (el único botón) ===== */
+.boton-wrap { z-index: 2; display: flex; flex-direction: column; align-items: center; }
+
+.btn-habla {
+  width: clamp(140px, 32vw, 200px);
+  height: clamp(140px, 32vw, 200px);
+  border-radius: 50%;
+  border: 5px solid var(--tinta);
+  cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px;
+  background: var(--rojo);
+  box-shadow: 7px 7px 0 var(--tinta), 0 0 0 8px var(--amarillo), 0 0 0 13px var(--tinta);
+  transition: transform 0.12s, box-shadow 0.12s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  position: relative; overflow: visible;
+}
+.btn-habla::before {
+  content: ''; position: absolute; inset: -3px;
+  border-radius: 50%; border: 3px dashed var(--tinta);
+  animation: bordeDash 8s linear infinite;
+}
+@keyframes bordeDash { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+
+.btn-habla:active {
+  transform: translate(5px, 5px);
+  box-shadow: 2px 2px 0 var(--tinta), 0 0 0 8px var(--amarillo), 0 0 0 13px var(--tinta);
+}
+
+/* States */
+.btn-habla.escuchando { background: var(--verde-claro); animation: botonLatido 0.65s ease-in-out infinite; }
+.btn-habla.pensando   { background: var(--morado); }
+.btn-habla.hablando   { background: var(--naranja); }
+@keyframes botonLatido { 0%,100% { transform: scale(1); } 50% { transform: scale(1.07); } }
+
+/* Play triangle icon */
+.play-triangle {
+  width: 0; height: 0;
+  border-top: clamp(22px, 6vw, 35px) solid transparent;
+  border-bottom: clamp(22px, 6vw, 35px) solid transparent;
+  border-left: clamp(36px, 10vw, 56px) solid white;
+  margin-left: clamp(6px, 2vw, 10px);
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+  pointer-events: none;
+  flex-shrink: 0;
+}
+
+.btn-icono {
+  font-size: clamp(2.2rem, 7vw, 3.2rem);
+  pointer-events: none; line-height: 1;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));
+}
+.btn-texto {
+  font-family: 'Boogaloo', cursive;
+  font-size: clamp(1rem, 3vw, 1.55rem);
+  color: white;
+  text-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+  pointer-events: none; letter-spacing: 1px;
+}
+
+/* Ondas de escucha */
+.onda {
+  position: absolute; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.5);
+  animation: ondaExpand 1.4s ease-out infinite;
   pointer-events: none;
 }
-.burbuja-wrap { width:100%; display:flex; justify-content:center; flex-shrink:0; z-index:2; }
-.burbuja {
-  background: #FFFBEE; border: 5px solid #1A1008;
-  border-radius: 30px; padding: 16px 24px;
-  max-width: min(90vw,600px); min-height: 88px; width: 100%;
-  display: flex; align-items: center; justify-content: center;
-  box-shadow: 5px 5px 0 #1A1008; position: relative;
+.onda:nth-child(2) { animation-delay: 0.5s; }
+.onda:nth-child(3) { animation-delay: 1s; }
+@keyframes ondaExpand {
+  0%   { width: 80%; height: 80%; opacity: 0.7; top: 10%; left: 10%; }
+  100% { width: 185%; height: 185%; opacity: 0; top: -42%; left: -42%; }
 }
-.burbuja::after { content:''; position:absolute; bottom:-30px; left:50%; transform:translateX(-50%); border:15px solid transparent; border-top-color:#1A1008; }
-.burbuja::before { content:''; position:absolute; bottom:-20px; left:50%; transform:translateX(-50%); border:12px solid transparent; border-top-color:#FFFBEE; z-index:1; }
-.burbuja-texto { font-size:clamp(1.55rem,4.2vw,2.5rem); color:#1A1008; text-align:center; line-height:1.3; }
-.burbuja-texto.vacio { color:#C8B49A; font-size:clamp(1.2rem,3.2vw,2rem); }
-.puntitos { display:inline-flex; gap:10px; align-items:center; }
-.puntitos span { width:18px; height:18px; border-radius:50%; border:3px solid #1A1008; animation:pb .9s ease-in-out infinite; }
-.puntitos span:nth-child(1){background:#E8332A} .puntitos span:nth-child(2){background:#FFD03A;animation-delay:.2s} .puntitos span:nth-child(3){background:#7B3FA0;animation-delay:.4s}
-@keyframes pb{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
-.roki-wrap { flex:1; display:flex; align-items:center; justify-content:center; min-height:0; z-index:2; }
-#roki { width:min(56vw,300px); height:auto; filter:drop-shadow(0 12px 10px rgba(0,0,0,0.22)); }
-#roki.brinca  { animation:brinca  1.8s ease-in-out infinite alternate; }
-#roki.escucha { animation:escucha 0.5s ease-in-out infinite; }
-#roki.habla   { animation:habla   0.24s ease-in-out infinite; }
-#roki.piensa  { animation:piensa  1.2s ease-in-out infinite; }
-@keyframes brinca  {from{transform:translateY(0) rotate(-2deg)}to{transform:translateY(-18px) rotate(2deg)}}
-@keyframes escucha {0%,100%{transform:scale(1) rotate(-3deg)}50%{transform:scale(1.1) rotate(3deg)}}
-@keyframes habla   {0%,100%{transform:scaleY(1)}50%{transform:scaleY(.94) translateY(-4px)}}
-@keyframes piensa  {0%,100%{transform:translateY(0)}50%{transform:translateY(-10px) rotate(-2deg)}}
-.btn-wrap { flex-shrink:0; z-index:2; }
-.btn {
-  width:min(33vw,195px); height:min(33vw,195px); border-radius:50%; border:6px solid #1A1008;
-  cursor:pointer; display:flex; align-items:center; justify-content:center;
-  touch-action:manipulation; position:relative; overflow:visible;
-  background:radial-gradient(circle at 38% 32%,#FF6B5E,#CC2A22);
-  box-shadow:0 11px 0 #8B1812,0 13px 0 #1A1008,0 0 0 9px #FFD03A,0 0 0 15px #1A1008;
-  transition:transform .1s,box-shadow .1s;
+
+/* Audio bars */
+.visualizer {
+  display: flex; align-items: flex-end; gap: 3px; height: 28px;
 }
-.btn::before { content:''; position:absolute; inset:-7px; border-radius:50%; border:4px dashed rgba(255,255,255,.35); animation:ringGira 7s linear infinite; }
-@keyframes ringGira{to{transform:rotate(360deg)}}
-.btn::after { content:''; position:absolute; top:11%; left:20%; width:38%; height:22%; background:rgba(255,255,255,.28); border-radius:50%; transform:rotate(-30deg); pointer-events:none; }
-.btn:active { transform:translateY(9px); box-shadow:0 2px 0 #8B1812,0 4px 0 #1A1008,0 0 0 9px #FFD03A,0 0 0 15px #1A1008; }
-.btn.escuchando { background:radial-gradient(circle at 38% 32%,#9B6FDD,#6A2AAA); box-shadow:0 11px 0 #3D1270,0 13px 0 #1A1008,0 0 0 9px #FFD03A,0 0 0 15px #1A1008; animation:latido .65s ease-in-out infinite; }
-.btn.pensando { background:radial-gradient(circle at 38% 32%,#FFD060,#F5A800); box-shadow:0 11px 0 #A06800,0 13px 0 #1A1008,0 0 0 9px #FFD03A,0 0 0 15px #1A1008; }
-.btn.hablando { background:radial-gradient(circle at 38% 32%,#6FE07A,#2E9E38); box-shadow:0 11px 0 #1A6622,0 13px 0 #1A1008,0 0 0 9px #FFD03A,0 0 0 15px #1A1008; }
-@keyframes latido{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
-.btn-inner{pointer-events:none;display:flex;align-items:center;justify-content:center;width:100%;height:100%}
-.ondas{position:absolute;inset:0;border-radius:50%;overflow:visible}
-.onda{position:absolute;border-radius:50%;border:4px solid rgba(255,255,255,.4);animation:ondaSale 1.4s ease-out infinite}
-.onda:nth-child(2){animation-delay:.5s}.onda:nth-child(3){animation-delay:1s}
-@keyframes ondaSale{0%{width:76%;height:76%;top:12%;left:12%;opacity:.8}100%{width:200%;height:200%;top:-50%;left:-50%;opacity:0}}
-.barras{display:flex;align-items:flex-end;gap:5px;height:54px}
-.barra{width:9px;background:white;border-radius:5px;box-shadow:0 0 8px rgba(255,255,255,.5);animation:barraSube .55s ease-in-out infinite}
-.barra:nth-child(1){height:14px}.barra:nth-child(2){height:36px;animation-delay:.1s}.barra:nth-child(3){height:22px;animation-delay:.2s}.barra:nth-child(4){height:44px;animation-delay:.05s}.barra:nth-child(5){height:18px;animation-delay:.15s}
-@keyframes barraSube{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1.2)}}
-.temas{display:flex;gap:clamp(7px,2vw,13px);justify-content:center;align-items:center;flex-shrink:0;z-index:2}
-.tema{width:clamp(60px,13vw,85px);height:clamp(60px,13vw,85px);border-radius:22px;border:4px solid #1A1008;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 6px 0 #1A1008;transition:transform .1s,box-shadow .1s;touch-action:manipulation;font-size:clamp(2rem,5.5vw,3.2rem);position:relative;overflow:hidden}
-.tema::after{content:'';position:absolute;top:5px;left:10%;width:50%;height:28%;background:rgba(255,255,255,.35);border-radius:50%;transform:rotate(-15deg);pointer-events:none}
-.tema:active{transform:translateY(5px);box-shadow:0 1px 0 #1A1008}
-.tema:nth-child(1){background:#FFD166}.tema:nth-child(2){background:#A8E8CF}.tema:nth-child(3){background:#FFB8C8}.tema:nth-child(4){background:#B8D8FF}.tema:nth-child(5){background:#FFD8B0}.tema:nth-child(6){background:#E8CAFF}
-.fiesta{position:fixed;inset:0;pointer-events:none;z-index:9999}
-.confeti{position:absolute;animation:cVuela 2s ease-out forwards}
-@keyframes cVuela{0%{opacity:1;transform:scale(.3) translateY(40px) rotate(0)}50%{opacity:1;transform:scale(1.9) translateY(-100px) rotate(230deg)}100%{opacity:0;transform:scale(.7) translateY(-190px) rotate(430deg)}}
+.bar {
+  width: 6px; background: white; border-radius: 3px;
+  animation: barBounce 0.6s ease-in-out infinite;
+}
+.bar:nth-child(1) { height: 8px; animation-delay: 0s; }
+.bar:nth-child(2) { height: 20px; animation-delay: 0.1s; }
+.bar:nth-child(3) { height: 13px; animation-delay: 0.2s; }
+.bar:nth-child(4) { height: 22px; animation-delay: 0.05s; }
+.bar:nth-child(5) { height: 11px; animation-delay: 0.15s; }
+@keyframes barBounce { 0%,100% { transform: scaleY(0.4); } 50% { transform: scaleY(1.2); } }
+
+/* ===== TEMAS ===== */
+.temas {
+  z-index: 2;
+  display: flex; flex-wrap: wrap; gap: 7px; justify-content: center;
+  width: 100%; max-width: 600px;
+  padding-bottom: 4px;
+}
+.tema-btn {
+  background: var(--papel);
+  border: 3px solid var(--tinta); border-radius: 50px;
+  padding: 6px 14px;
+  font-family: 'Boogaloo', cursive;
+  font-size: clamp(0.88rem, 2.3vw, 1.15rem);
+  color: var(--tinta); cursor: pointer;
+  box-shadow: 3px 3px 0 var(--tinta);
+  transition: transform 0.1s, box-shadow 0.1s;
+  -webkit-tap-highlight-color: transparent;
+  display: flex; align-items: center; gap: 4px;
+  white-space: nowrap;
+}
+.tema-btn:nth-child(1) { background: #FFE566; }
+.tema-btn:nth-child(2) { background: #B8F0C0; }
+.tema-btn:nth-child(3) { background: #FFB3CC; }
+.tema-btn:nth-child(4) { background: #B3D9FF; }
+.tema-btn:nth-child(5) { background: #FFD4A8; }
+.tema-btn:nth-child(6) { background: #E8C8FF; }
+.tema-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--tinta); }
+
+/* ===== FIESTA ===== */
+.fiesta-container { position: fixed; inset: 0; pointer-events: none; z-index: 9999; }
+.estrellita { position: absolute; font-size: 1.8rem; animation: vuelaEstrella 1.8s ease-out forwards; }
+@keyframes vuelaEstrella {
+  0%   { opacity: 1; transform: scale(0.4) translateY(30px); }
+  45%  { opacity: 1; transform: scale(1.7) translateY(-70px) rotate(210deg); }
+  100% { opacity: 0; transform: scale(0.7) translateY(-150px) rotate(400deg); }
+}
 </style>
 </head>
 <body>
-<div class="fiesta" id="fiesta"></div>
 
-<div class="burbuja-wrap">
-  <div class="burbuja">
-    <div class="burbuja-texto vacio" id="burbujaTexto">¡Toca el botón rojo! 🐾</div>
+<div class="fiesta-container" id="fiestaContainer"></div>
+
+<div class="libro">
+  <span class="esquina tl">🌺</span>
+  <span class="esquina tr">🌻</span>
+  <span class="esquina bl">🍃</span>
+  <span class="esquina br">🌸</span>
+
+  <div class="titulo-wrap">
+    <span class="deco-star izq">⭐</span>
+    <div class="titulo">¡Habla con Sapo! 🐸</div>
+    <span class="deco-star der">⭐</span>
+  </div>
+
+  <div class="sapo-zona">
+    <svg class="sapo-svg brinca" id="sapoSvg" viewBox="0 0 160 180" xmlns="http://www.w3.org/2000/svg">
+      <ellipse cx="80" cy="173" rx="42" ry="7" fill="#00000022"/>
+      <ellipse cx="80" cy="130" rx="52" ry="44" fill="#4DC95A" stroke="#1E1206" stroke-width="4"/>
+      <ellipse cx="80" cy="138" rx="34" ry="28" fill="#A8E87A" stroke="#1E1206" stroke-width="2.5"/>
+      <path d="M34 148 Q10 162 8 175 Q18 172 28 165 Q36 170 44 168 Z" fill="#3DAA44" stroke="#1E1206" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M126 148 Q150 162 152 175 Q142 172 132 165 Q124 170 116 168 Z" fill="#3DAA44" stroke="#1E1206" stroke-width="3" stroke-linejoin="round"/>
+      <path d="M42 118 Q20 110 16 125 Q24 132 36 126 Z" fill="#3DAA44" stroke="#1E1206" stroke-width="3"/>
+      <path d="M118 118 Q140 110 144 125 Q136 132 124 126 Z" fill="#3DAA44" stroke="#1E1206" stroke-width="3"/>
+      <ellipse cx="80" cy="78" rx="50" ry="44" fill="#4DC95A" stroke="#1E1206" stroke-width="4"/>
+      <ellipse cx="52" cy="58" rx="20" ry="18" fill="#4DC95A" stroke="#1E1206" stroke-width="3.5"/>
+      <ellipse cx="108" cy="58" rx="20" ry="18" fill="#4DC95A" stroke="#1E1206" stroke-width="3.5"/>
+      <circle cx="52" cy="60" r="13" fill="#FFE830" stroke="#1E1206" stroke-width="2.5"/>
+      <circle cx="108" cy="60" r="13" fill="#FFE830" stroke="#1E1206" stroke-width="2.5"/>
+      <circle cx="54" cy="62" r="7" fill="#1E1206"/>
+      <circle cx="110" cy="62" r="7" fill="#1E1206"/>
+      <circle cx="57" cy="58" r="2.5" fill="white"/>
+      <circle cx="113" cy="58" r="2.5" fill="white"/>
+      <circle cx="73" cy="88" r="4" fill="#1E1206" opacity="0.45"/>
+      <circle cx="87" cy="88" r="4" fill="#1E1206" opacity="0.45"/>
+      <path id="bocaSapo" d="M58 100 Q80 116 102 100" fill="none" stroke="#1E1206" stroke-width="3.5" stroke-linecap="round"/>
+      <rect x="52" y="26" width="56" height="32" rx="6" fill="#E8332A" stroke="#1E1206" stroke-width="3.5"/>
+      <rect x="44" y="52" width="72" height="10" rx="5" fill="#E8332A" stroke="#1E1206" stroke-width="3"/>
+      <circle cx="80" cy="26" r="7" fill="#FFD03A" stroke="#1E1206" stroke-width="2.5"/>
+      <text x="60" y="46" font-size="12" fill="#FFD03A" font-family="Arial">★</text>
+      <text x="88" y="46" font-size="12" fill="#FFD03A" font-family="Arial">★</text>
+    </svg>
+
+    <div class="bocadillo-wrap">
+      <div class="bocadillo">
+        <div class="bocadillo-texto vacio" id="bocadilloTexto">
+          ¡Toca el botón rojo y háblame! 🎉
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tira-escucho" id="tiraEscu">👂 ¡Listo para escucharte!</div>
+
+  <!-- THE ONE AND ONLY BUTTON -->
+  <div class="boton-wrap">
+    <button class="btn-habla" id="btnHabla" onclick="handleBtnHabla()">
+      <div class="play-triangle" id="playTriangle"></div>
+    </button>
+  </div>
+
+  <div class="temas">
+    <button class="tema-btn" onclick="preguntarTema('¡Cuéntame algo chévere sobre los animales!')">🦁 Animales</button>
+    <button class="tema-btn" onclick="preguntarTema('¡Vamos a contar juntos del uno al diez!')">🔢 ¡Contar!</button>
+    <button class="tema-btn" onclick="preguntarTema('¿De qué colores es el arcoíris?')">🌈 Colores</button>
+    <button class="tema-btn" onclick="preguntarTema('¡Cuéntame un cuento corto y gracioso!')">📖 Cuento</button>
+    <button class="tema-btn" onclick="preguntarTema('¡Enséñame una canción o rima divertida!')">🎵 Canciones</button>
+    <button class="tema-btn" onclick="preguntarTema('¿Qué figuras y formas conoces?')">⭐ Figuras</button>
   </div>
 </div>
 
-<div class="roki-wrap">
-<svg id="roki" class="brinca" viewBox="0 0 260 290" xmlns="http://www.w3.org/2000/svg">
-
-  <!-- shadow -->
-  <ellipse cx="130" cy="284" rx="55" ry="8" fill="#00000020"/>
-
-  <!-- TAIL behind body -->
-  <path d="M188 228 Q225 208 222 172 Q220 154 206 160 Q214 170 211 186 Q207 208 176 220 Z"
-        fill="#D46818" stroke="#1A1008" stroke-width="4" stroke-linejoin="round"/>
-
-  <!-- BODY round -->
-  <ellipse cx="130" cy="220" rx="70" ry="60" fill="#7B3FA0" stroke="#1A1008" stroke-width="5"/>
-  <ellipse cx="130" cy="226" rx="42" ry="36" fill="#6830A0" stroke="#1A1008" stroke-width="3"/>
-
-  <!-- chest badge -->
-  <circle cx="130" cy="220" r="19" fill="#FFD03A" stroke="#1A1008" stroke-width="3"/>
-  <circle cx="130" cy="213" r="6" fill="#E8332A" stroke="#1A1008" stroke-width="2"/>
-  <circle cx="122" cy="222" r="4.5" fill="#E8332A" stroke="#1A1008" stroke-width="1.5"/>
-  <circle cx="130" cy="226" r="4.5" fill="#E8332A" stroke="#1A1008" stroke-width="1.5"/>
-  <circle cx="138" cy="222" r="4.5" fill="#E8332A" stroke="#1A1008" stroke-width="1.5"/>
-
-  <!-- LEGS simple ovals -->
-  <ellipse cx="90"  cy="268" rx="26" ry="16" fill="#E07828" stroke="#1A1008" stroke-width="4"/>
-  <ellipse cx="170" cy="268" rx="26" ry="16" fill="#E07828" stroke="#1A1008" stroke-width="4"/>
-
-  <!-- ARMS simple -->
-  <ellipse cx="66"  cy="212" rx="18" ry="14" fill="#E07828" stroke="#1A1008" stroke-width="4"/>
-  <ellipse cx="194" cy="212" rx="18" ry="14" fill="#E07828" stroke="#1A1008" stroke-width="4"/>
-
-  <!-- HEAD big circle -->
-  <circle cx="130" cy="128" r="86" fill="#E07828" stroke="#1A1008" stroke-width="5.5"/>
-
-  <!-- LEFT EAR - long floppy hanging down sides -->
-  <path d="M54 100 Q24 112 20 158 Q16 192 46 200 Q64 205 70 176 Q76 148 66 112 Z"
-        fill="#C05810" stroke="#1A1008" stroke-width="4.5"/>
-  <path d="M57 106 Q32 118 28 158 Q25 186 48 193 Q62 197 67 172 Q72 148 63 116 Z"
-        fill="#D46818"/>
-
-  <!-- RIGHT EAR -->
-  <path d="M206 100 Q236 112 240 158 Q244 192 214 200 Q196 205 190 176 Q184 148 194 112 Z"
-        fill="#C05810" stroke="#1A1008" stroke-width="4.5"/>
-  <path d="M203 106 Q228 118 232 158 Q235 186 212 193 Q198 197 193 172 Q188 148 197 116 Z"
-        fill="#D46818"/>
-
-  <!-- SNOUT - small tasteful oval -->
-  <ellipse cx="130" cy="162" rx="32" ry="23" fill="#F09050" stroke="#1A1008" stroke-width="4"/>
-
-  <!-- nose -->
-  <rect x="119" y="149" width="22" height="14" rx="7" fill="#1A1008"/>
-  <ellipse cx="124" cy="153" rx="4" ry="2.5" fill="rgba(255,255,255,0.38)"/>
-
-  <!-- simple smile - NO teeth -->
-  <path id="boca" d="M108 172 Q130 188 152 172"
-        fill="none" stroke="#1A1008" stroke-width="4.5" stroke-linecap="round"/>
-
-  <!-- EYES - well spaced -->
-  <circle cx="98"  cy="118" r="25" fill="white" stroke="#1A1008" stroke-width="4"/>
-  <circle cx="162" cy="118" r="25" fill="white" stroke="#1A1008" stroke-width="4"/>
-  <circle cx="98"  cy="120" r="17" fill="#6B3A10"/>
-  <circle cx="162" cy="120" r="17" fill="#6B3A10"/>
-  <circle cx="101" cy="122" r="11" fill="#150C04"/>
-  <circle cx="165" cy="122" r="11" fill="#150C04"/>
-  <!-- shine -->
-  <circle cx="107" cy="112" r="5.5" fill="white"/>
-  <circle cx="171" cy="112" r="5.5" fill="white"/>
-  <circle cx="95"  cy="128" r="2.5" fill="white" opacity="0.5"/>
-  <circle cx="159" cy="128" r="2.5" fill="white" opacity="0.5"/>
-
-  <!-- eyebrows happy -->
-  <path d="M76 96 Q98 83 118 90" stroke="#1A1008" stroke-width="5" stroke-linecap="round" fill="none"/>
-  <path d="M142 90 Q162 81 184 94" stroke="#1A1008" stroke-width="5" stroke-linecap="round" fill="none"/>
-
-  <!-- blush -->
-  <ellipse cx="70"  cy="146" rx="15" ry="10" fill="#FF9999" opacity="0.4"/>
-  <ellipse cx="190" cy="146" rx="15" ry="10" fill="#FF9999" opacity="0.4"/>
-
-  <!-- HAT -->
-  <ellipse cx="130" cy="52" rx="80" ry="15" fill="#4A1878" stroke="#1A1008" stroke-width="4.5"/>
-  <path d="M54 52 Q56 10 130 6 Q204 10 206 52 Z" fill="#7B3FA0" stroke="#1A1008" stroke-width="4.5"/>
-  <path d="M54 52 Q130 43 206 52 Q204 63 130 65 Q56 63 54 52 Z" fill="#FFD03A" stroke="#1A1008" stroke-width="3"/>
-  <!-- hat star -->
-  <circle cx="130" cy="30" r="15" fill="#FFD03A" stroke="#1A1008" stroke-width="3"/>
-  <polygon points="130,18 133,27 143,27 135,33 138,42 130,36 122,42 125,33 117,27 127,27"
-           fill="#E8332A" stroke="#1A1008" stroke-width="1"/>
-
-</svg>
-</div>
-
-<div class="btn-wrap">
-  <button class="btn" id="btn" onclick="handleBtn()">
-    <div class="btn-inner" id="btnInner">
-      <svg width="42%" height="42%" viewBox="0 0 64 64" fill="none">
-        <rect x="20" y="3" width="24" height="36" rx="12" fill="white" opacity="0.95"/>
-        <path d="M10 30 C10 48 54 48 54 30" stroke="white" stroke-width="5.5" stroke-linecap="round" fill="none"/>
-        <line x1="32" y1="48" x2="32" y2="60" stroke="white" stroke-width="5.5" stroke-linecap="round"/>
-        <line x1="18" y1="60" x2="46" y2="60" stroke="white" stroke-width="5.5" stroke-linecap="round"/>
-      </svg>
-    </div>
-  </button>
-</div>
-
-<div class="temas">
-  <button class="tema" onclick="pregunta('Cuentame sobre animales')">🦁</button>
-  <button class="tema" onclick="pregunta('Vamos a contar del uno al diez')">🔢</button>
-  <button class="tema" onclick="pregunta('De que colores es el arcoiris')">🌈</button>
-  <button class="tema" onclick="pregunta('Cuentame un cuento corto')">📖</button>
-  <button class="tema" onclick="pregunta('Ensename una cancion o rima')">🎵</button>
-  <button class="tema" onclick="pregunta('Que figuras y formas conoces')">⭐</button>
-</div>
-
 <script>
-const PROXY='https://toddler-ai-assistant-production.up.railway.app';
-const VOZ_ID='pNInz6obpgDQGcFmaJgB';
-const SYSTEM=`Eres Roki, un perrito juguetón y cariñoso que habla con niños de 3 años en español latinoamericano. Eres naranja, llevas uniforme morado.
-REGLAS: 1. Máximo 2 oraciones MUY cortas. 2. Solo palabras simples. 3. SÚPER animado: Wooow, Que chevere, Guau guau, Siii. 4. 1-2 emojis al final. 5. NUNCA groserías, violencia, miedo. 6. Si no entiendes responde positivo. 7. Elogia siempre. 8. Si ladran: Guau guau. 9. Para contar despacio. 10. Tu nombre es Roki, perrito naranja con uniforme morado.`;
+// ===== HARDCODED — NO SETUP NEEDED =====
+const PROXY_URL    = 'https://toddler-ai-assistant-production.up.railway.app';
+const VOICE_ID     = 'ajOR9IDAaubDK5qtLUqQ'; // Adam — change to any ElevenLabs voice ID
 
-let rec=null,escuchando=false,cargando=false,audioAct=null;
-function crearRec(){
-  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-  if(!SR)return null;
-  const r=new SR();
-  r.continuous=false;r.interimResults=true;r.lang='es-419';r.maxAlternatives=5;
-  r.onstart=()=>setEstado('escucha');
-  r.onresult=e=>{
-    let f='';
-    for(let i=e.resultIndex;i<e.results.length;i++)if(e.results[i].isFinal)f+=e.results[i][0].transcript;
-    if(f){pararEsc();enviar(f.trim()||'hola');}
+const SYSTEM_PROMPT = `Eres Sapo, un amiguito juguetón y cariñoso que habla con niños de 3 años en español latinoamericano (LATAM). Hablas con la calidez de Venezuela, Colombia, México o Argentina.
+
+REGLAS ABSOLUTAS:
+1. Responde SIEMPRE en máximo 2 oraciones MUY cortas y simples.
+2. Usa SOLO palabras que un niño de 3 años entienda. Sin palabras difíciles.
+3. Sé SÚPER animado: "¡Wooow!", "¡Qué chévere!", "¡Siii!", "¡Bacano!", "¡Eso es!", "¡Genial!"
+4. Añade 1 o 2 emojis al final.
+5. NUNCA digas groserías, temas inapropiados, violencia, ni nada de miedo. Siempre 100% PG.
+6. Si el niño dice algo que no entiendes (habla enredada, palabras inventadas), SIEMPRE responde positivo: "¡Qué cosa más chévere!" o "¡Cuéntame más de eso!"
+7. NUNCA digas que no entendiste. Siempre con entusiasmo.
+8. Da respuestas simples y divertidas.
+9. Elogia al niño siempre: "¡Eres muy listo!", "¡Qué inteligente!", "¡Me encanta hablar contigo!"
+10. Si hacen sonidos de animales, ¡imítalos con palabras!
+11. Para contar, cuenta despacio: "Uno... dos... tres..."
+12. Usa diminutivos cariñosos: "animalito", "colorcito", "poquito".
+13. Tu nombre es Sapo. Eres un sapito verde con gorrito rojo.`;
+
+// ===== STATE =====
+let reconocimiento = null;
+let estaEscuchando = false;
+let estaCargando   = false;
+let audioActual    = null;
+
+// ===== SPEECH RECOGNITION =====
+function configurarReconocimiento() {
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) return null;
+  const r = new SR();
+  r.continuous      = false;
+  r.interimResults  = true;
+  r.lang            = 'es-419';
+  r.maxAlternatives = 5;
+
+  let ultimoInterim = '';
+  let yaEnvio = false;
+
+  r.onstart = () => { ultimoInterim = ''; yaEnvio = false; estadoEscuchando(true); };
+
+  r.onresult = (e) => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    if (interim) ultimoInterim = interim;
+    if (final && !yaEnvio) {
+      yaEnvio = true;
+      pararEscucha();
+      enviarAIA(final.trim() || 'hola');
+    }
   };
-  r.onerror=e=>{pararEsc();if(e.error!=='no-speech')enviar('hola');};
-  r.onend=()=>{if(escuchando)pararEsc();};
+
+  r.onerror = (e) => {
+    pararEscucha();
+    if (e.error === 'not-allowed') setTira('🎙️ ¡Necesito permiso del micrófono!', 'error');
+    else if (e.error === 'no-speech') iniciarEscucha();
+  };
+
+  // Auto-submit when mic stops and we caught interim speech
+  r.onend = () => {
+    if (!yaEnvio && ultimoInterim.trim()) {
+      yaEnvio = true;
+      estaEscuchando = false;
+      estadoEscuchando(false);
+      enviarAIA(ultimoInterim.trim());
+    } else if (estaEscuchando) {
+      pararEscucha();
+    }
+  };
+
   return r;
 }
-const MIC=`<svg width="42%" height="42%" viewBox="0 0 64 64" fill="none"><rect x="20" y="3" width="24" height="36" rx="12" fill="white" opacity="0.95"/><path d="M10 30 C10 48 54 48 54 30" stroke="white" stroke-width="5.5" stroke-linecap="round" fill="none"/><line x1="32" y1="48" x2="32" y2="60" stroke="white" stroke-width="5.5" stroke-linecap="round"/><line x1="18" y1="60" x2="46" y2="60" stroke="white" stroke-width="5.5" stroke-linecap="round"/></svg>`;
-const EAR=`<div class="ondas"><div class="onda"></div><div class="onda"></div><div class="onda"></div></div><svg width="38%" height="38%" viewBox="0 0 64 64" fill="none"><rect x="20" y="3" width="24" height="36" rx="12" fill="white"/><path d="M10 30 C10 48 54 48 54 30" stroke="white" stroke-width="5.5" stroke-linecap="round" fill="none"/><line x1="32" y1="48" x2="32" y2="60" stroke="white" stroke-width="5.5" stroke-linecap="round"/><line x1="18" y1="60" x2="46" y2="60" stroke="white" stroke-width="5.5" stroke-linecap="round"/></svg>`;
-const BARS=`<div class="barras"><div class="barra"></div><div class="barra"></div><div class="barra"></div><div class="barra"></div><div class="barra"></div></div>`;
-const SPIN=`<svg width="42%" height="42%" viewBox="0 0 64 64" fill="none"><circle cx="32" cy="32" r="26" stroke="white" stroke-width="6" stroke-dasharray="40 82" stroke-linecap="round"><animateTransform attributeName="transform" type="rotate" from="0 32 32" to="360 32 32" dur="1s" repeatCount="indefinite"/></circle></svg>`;
 
-function setEstado(e){
-  const btn=document.getElementById('btn'),roki=document.getElementById('roki'),inner=document.getElementById('btnInner');
-  escuchando=(e==='escucha');btn.className='btn';
-  if(e==='escucha'){btn.classList.add('escuchando');inner.innerHTML=EAR;roki.className='escucha';}
-  else if(e==='piensa'){btn.classList.add('pensando');inner.innerHTML=SPIN;roki.className='piensa';}
-  else if(e==='habla'){btn.classList.add('hablando');inner.innerHTML=BARS;roki.className='habla';}
-  else{inner.innerHTML=MIC;roki.className='brinca';}
+// ===== UI HELPERS =====
+function setTira(texto, clase) {
+  const el = document.getElementById('tiraEscu');
+  el.textContent = texto;
+  el.className   = 'tira-escucho' + (clase ? ' ' + clase : '');
 }
-function handleBtn(){
-  if(cargando)return;
-  if(audioAct){audioAct.pause();audioAct=null;setEstado('idle');return;}
-  if(escuchando){pararEsc();return;}
-  iniciarEsc();
+
+function estadoEscuchando(on) {
+  estaEscuchando = on;
+  const btn  = document.getElementById('btnHabla');
+  const sapo = document.getElementById('sapoSvg');
+  if (on) {
+    btn.className = 'btn-habla escuchando';
+    btn.innerHTML = `<div class="onda"></div><div class="onda"></div><div class="onda"></div><span class="btn-icono">👂</span>`;
+    sapo.className = 'sapo-svg escucha';
+    setTira('🎙️ ¡Estoy escuchándote!', 'activa');
+  } else {
+    restaurarBoton();
+    sapo.className = 'sapo-svg brinca';
+  }
 }
-function iniciarEsc(){
-  if(!rec)rec=crearRec();if(!rec)return;
-  try{rec.start();}catch(e){rec=crearRec();try{rec.start();}catch(e2){}}
+
+function restaurarBoton() {
+  const btn = document.getElementById('btnHabla');
+  btn.className = 'btn-habla';
+  btn.innerHTML = `<div class="play-triangle"></div>`;
 }
-function pararEsc(){escuchando=false;if(rec)try{rec.stop();}catch(e){}setEstado('idle');}
-function pregunta(t){if(cargando||escuchando)return;enviar(t);}
-async function enviar(txt){
-  cargando=true;setEstado('piensa');
-  const bt=document.getElementById('burbujaTexto');
-  bt.className='burbuja-texto';bt.innerHTML='<div class="puntitos"><span></span><span></span><span></span></div>';
-  try{
-    const res=await fetch(`${PROXY}/api/chat`,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:120,system:SYSTEM,messages:[{role:'user',content:txt}]})});
-    const data=await res.json();
-    const resp=data?.content?.[0]?.text||'Guau guau! Me encanta hablar contigo!';
-    mostrar(resp);await hablar(resp);fiesta();
-  }catch(e){cargando=false;setEstado('idle');mostrar('Ups! Intentalo de nuevo!');}
+
+// ===== MAIN HANDLER =====
+function handleBtnHabla() {
+  if (estaCargando) return;
+
+  // Stop audio if playing
+  if (audioActual) {
+    audioActual.pause();
+    audioActual = null;
+    restaurarBoton();
+    document.getElementById('sapoSvg').className = 'sapo-svg brinca';
+    setTira('👂 ¡Tu turno! ¡Toca y habla!', '');
+    return;
+  }
+
+  if (estaEscuchando) { pararEscucha(); return; }
+  iniciarEscucha();
 }
-function mostrar(txt){
-  const el=document.getElementById('burbujaTexto');
-  el.className='burbuja-texto';el.textContent=txt;
-  const b=document.getElementById('boca');
-  if(b){b.setAttribute('d','M108 168 Q130 192 152 168');setTimeout(()=>b.setAttribute('d','M108 172 Q130 188 152 172'),4500);}
+
+function iniciarEscucha() {
+  if (!reconocimiento) reconocimiento = configurarReconocimiento();
+  if (!reconocimiento) { setTira('😅 ¡Este navegador no soporta micrófono!', 'error'); return; }
+  try { reconocimiento.start(); }
+  catch(e) {
+    reconocimiento = configurarReconocimiento();
+    try { reconocimiento.start(); } catch(e2) {}
+  }
 }
-async function hablar(txt){
-  const limpio=txt.replace(/[\u{1F300}-\u{1FFFF}]/gu,'').replace(/[⭐★✨🎉🎊💛❤️💚💙🌺🌸🍀🦋🎵🎈🌈🐾]/g,'').trim();
-  try{
-    const res=await fetch(`${PROXY}/api/tts/${VOZ_ID}`,{method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({text:limpio,model_id:'eleven_multilingual_v2',voice_settings:{stability:.55,similarity_boost:.8,style:.35,use_speaker_boost:true}})});
-    if(!res.ok)throw new Error('tts');
-    const blob=await res.blob();const url=URL.createObjectURL(blob);
-    const audio=new Audio(url);audioAct=audio;cargando=false;
-    audio.onplay=()=>setEstado('habla');
-    audio.onended=()=>{audioAct=null;URL.revokeObjectURL(url);setEstado('idle');};
-    audio.onerror=()=>{audioAct=null;setEstado('idle');};
+
+function pararEscucha() {
+  estaEscuchando = false;
+  if (reconocimiento) try { reconocimiento.stop(); } catch(e) {}
+  estadoEscuchando(false);
+}
+
+// ===== TOPIC SHORTCUTS =====
+function preguntarTema(texto) {
+  if (estaCargando || estaEscuchando) return;
+  setTira(`👆 Tema elegido`, 'activa');
+  enviarAIA(texto);
+}
+
+// ===== CLAUDE API =====
+async function enviarAIA(textoUsuario) {
+  estaCargando = true;
+  const btn  = document.getElementById('btnHabla');
+  const sapo = document.getElementById('sapoSvg');
+
+  btn.className = 'btn-habla pensando';
+  btn.innerHTML = `<span class="btn-icono">🤔</span>`;
+  sapo.className = 'sapo-svg';
+
+  document.getElementById('bocadilloTexto').className = 'bocadillo-texto';
+  document.getElementById('bocadilloTexto').innerHTML =
+    `<div class="puntitos"><span></span><span></span><span></span></div>`;
+
+  try {
+    const res = await fetch(`${PROXY_URL}/api/chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 120,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: textoUsuario }]
+      })
+    });
+
+    const data = await res.json();
+    const respuesta = data?.content?.[0]?.text || '¡Qué chévere! ¡Me encanta hablar contigo! 🌟';
+
+    mostrarTexto(respuesta);
+    await hablarConEleven(respuesta);
+    lanzarFiesta();
+  } catch (err) {
+    estaCargando = false;
+    restaurarBoton();
+    setTira('⚠️ Algo salió mal, intenta de nuevo', 'error');
+    mostrarTexto('¡Ups! ¡Inténtalo de nuevo amiguito! 🐸');
+    document.getElementById('sapoSvg').className = 'sapo-svg brinca';
+  }
+}
+
+// ===== SHOW TEXT =====
+function mostrarTexto(texto) {
+  const el = document.getElementById('bocadilloTexto');
+  el.className   = 'bocadillo-texto';
+  el.textContent = texto;
+  const boca = document.getElementById('bocaSapo');
+  if (boca) boca.setAttribute('d', 'M60 98 Q80 122 100 98');
+  setTimeout(() => { if (boca) boca.setAttribute('d', 'M58 100 Q80 116 102 100'); }, 4000);
+}
+
+// ===== ELEVENLABS =====
+async function hablarConEleven(texto) {
+  const sapo = document.getElementById('sapoSvg');
+  const btn  = document.getElementById('btnHabla');
+
+  const textoLimpio = texto
+    .replace(/[\u{1F300}-\u{1FFFF}]/gu, '')
+    .replace(/[⭐★✨🎉🎊💛❤️💚💙🌺🌸🍀🦋🎵🎈🌈]/g, '')
+    .trim();
+
+  try {
+    const res = await fetch(`${PROXY_URL}/api/tts/${VOICE_ID}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        text: textoLimpio,
+        model_id: 'eleven_multilingual_v2',
+        voice_settings: {
+          stability: 0.55,
+          similarity_boost: 0.80,
+          style: 0.35,
+          use_speaker_boost: true
+        }
+      })
+    });
+
+    if (!res.ok) throw new Error('ElevenLabs error ' + res.status);
+
+    const audioBlob = await res.blob();
+    const audioUrl  = URL.createObjectURL(audioBlob);
+    const audio     = new Audio(audioUrl);
+    audioActual     = audio;
+    estaCargando    = false;
+
+    audio.onplay = () => {
+      sapo.className = 'sapo-svg habla';
+      btn.className  = 'btn-habla hablando';
+      btn.innerHTML  = `<div class="visualizer"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>`;
+    };
+
+    audio.onended = () => {
+      audioActual = null;
+      URL.revokeObjectURL(audioUrl);
+      sapo.className = 'sapo-svg brinca';
+      restaurarBoton();
+      setTira('👂 ¡Tu turno! ¡Toca y habla!', '');
+    };
+
+    audio.onerror = () => {
+      audioActual = null;
+      sapo.className = 'sapo-svg brinca';
+      restaurarBoton();
+    };
+
     await audio.play();
-  }catch(e){
-    cargando=false;setEstado('idle');
-    const u=new SpeechSynthesisUtterance(limpio);u.lang='es-MX';u.rate=.9;u.pitch=1.2;
+
+  } catch (err) {
+    console.error('ElevenLabs error:', err);
+    estaCargando = false;
+    sapo.className = 'sapo-svg brinca';
+    restaurarBoton();
+    // Fallback to browser TTS
+    const u = new SpeechSynthesisUtterance(textoLimpio);
+    u.lang = 'es-MX'; u.rate = 0.9; u.pitch = 1.2;
     window.speechSynthesis.speak(u);
   }
 }
-function fiesta(){
-  const c=document.getElementById('fiesta');
-  const e=['🌟','⭐','🎉','🎊','🌈','🎈','💛','❤️','🧡','💜','🌸','✨','🐾','🎵'];
-  for(let i=0;i<14;i++){
-    const d=document.createElement('div');d.className='confeti';
-    d.textContent=e[Math.floor(Math.random()*e.length)];
-    d.style.cssText=`left:${Math.random()*88+4}vw;top:${Math.random()*55+20}vh;animation-delay:${Math.random()*.7}s;font-size:${1.5+Math.random()*1.4}rem`;
-    c.appendChild(d);setTimeout(()=>d.remove(),2800);
+
+// ===== CELEBRATION =====
+function lanzarFiesta() {
+  const cont   = document.getElementById('fiestaContainer');
+  const emojis = ['🌟','⭐','🎉','🎊','🌈','🎈','💛','❤️','💚','💙','🌺','🌸','✨','🦋','🎵','🍀'];
+  for (let i = 0; i < 12; i++) {
+    const e = document.createElement('div');
+    e.className            = 'estrellita';
+    e.textContent          = emojis[Math.floor(Math.random() * emojis.length)];
+    e.style.left           = (Math.random() * 86 + 5) + 'vw';
+    e.style.top            = (Math.random() * 50 + 20) + 'vh';
+    e.style.animationDelay = (Math.random() * 0.7) + 's';
+    e.style.fontSize       = (1.4 + Math.random() * 1.2) + 'rem';
+    cont.appendChild(e);
+    setTimeout(() => e.remove(), 2800);
   }
 }
-window.addEventListener('load',()=>{setTimeout(()=>enviar('hola roki presentate muy brevemente en 1 oracion'),900);});
+
+// ===== BOOT =====
+window.addEventListener('load', () => {
+  setTimeout(() => enviarAIA('hola sapo preséntate muy brevemente en 1 oración'), 1000);
+});
 </script>
 </body>
 </html>
