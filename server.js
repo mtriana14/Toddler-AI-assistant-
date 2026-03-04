@@ -5,67 +5,80 @@ const fetch = (...args) => import('node-fetch').then(({default: f}) => f(...args
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// ── Env vars (set these in Railway dashboard) ──────────────────────────
 const ANTHROPIC_KEY  = process.env.ANTHROPIC_API_KEY;
 const ELEVENLABS_KEY = process.env.ELEVENLABS_API_KEY;
+const OPENAI_KEY     = process.env.OPENAI_API_KEY;
 const ALLOWED_ORIGIN = process.env.ALLOWED_ORIGIN || '*';
-// ────────────────────────────────────────────────────────────────────────
 
 app.use(cors({ origin: ALLOWED_ORIGIN }));
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '2mb' }));
 
-// ── Serve the Sapo app at root ────────────────────────────────────────
+// ── Serve app ─────────────────────────────────────────────────────────
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/amiguito-habla-end.html');
 });
 
-// ── Debug ────────────────────────────────────────────────────────────
-app.get('/debug', (req, res) => {
-  res.json({
-    elevenlabs_key_set: !!ELEVENLABS_KEY,
-    elevenlabs_key_prefix: ELEVENLABS_KEY ? ELEVENLABS_KEY.substring(0, 8) + '...' : 'NOT SET'
-  });
-});
-
-// ── Health check ──────────────────────────────────────────────────────
+// ── Health ────────────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({ status: '🐸 Sapo proxy running!', time: new Date().toISOString() });
 });
 
-// ── Claude (Anthropic) ───────────────────────────────────────────────────
+// ── Debug ─────────────────────────────────────────────────────────────
+app.get('/debug', (req, res) => {
+  res.json({
+    elevenlabs_key_set: !!ELEVENLABS_KEY,
+    openai_key_set: !!OPENAI_KEY,
+    anthropic_key_set: !!ANTHROPIC_KEY
+  });
+});
+
+// ── OpenAI Chat ───────────────────────────────────────────────────────
 app.post('/api/chat', async (req, res) => {
-  if (!ANTHROPIC_KEY) {
-    return res.status(500).json({ error: 'ANTHROPIC_API_KEY not set in Railway environment' });
+  if (!OPENAI_KEY) {
+    return res.status(500).json({ error: 'OPENAI_API_KEY not set' });
   }
 
   try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const { messages, system } = req.body;
+
+    const response = await fetch('https://api.openai.com/v1/chat/completions', {
       method: 'POST',
       headers: {
-        'Content-Type':      'application/json',
-        'x-api-key':         ANTHROPIC_KEY,
-        'anthropic-version': '2023-06-01'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENAI_KEY}`
       },
-      body: JSON.stringify(req.body)
+      body: JSON.stringify({
+        model: 'gpt-4o-mini',
+        max_tokens: 120,
+        temperature: 0.7,
+        messages: [
+          { role: 'system', content: system },
+          ...messages
+        ]
+      })
     });
 
     const data = await response.json();
 
     if (!response.ok) {
+      console.error('OpenAI error:', JSON.stringify(data));
       return res.status(response.status).json({ error: data });
     }
 
-    res.json(data);
+    // Return in same format as Anthropic so frontend doesn't change
+    const text = data.choices?.[0]?.message?.content || '¡Qué chévere!';
+    res.json({ content: [{ type: 'text', text }] });
+
   } catch (err) {
-    console.error('Anthropic error:', err.message);
-    res.status(500).json({ error: 'Anthropic request failed' });
+    console.error('OpenAI error:', err.message);
+    res.status(500).json({ error: 'OpenAI request failed' });
   }
 });
 
-// ── ElevenLabs TTS ───────────────────────────────────────────────────────
+// ── ElevenLabs TTS ────────────────────────────────────────────────────
 app.post('/api/tts/:voiceId', async (req, res) => {
   if (!ELEVENLABS_KEY) {
-    return res.status(500).json({ error: 'ELEVENLABS_API_KEY not set in Railway environment' });
+    return res.status(500).json({ error: 'ELEVENLABS_API_KEY not set' });
   }
 
   const { voiceId } = req.params;
@@ -78,13 +91,14 @@ app.post('/api/tts/:voiceId', async (req, res) => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'xi-api-key':   ELEVENLABS_KEY
+          'xi-api-key': ELEVENLABS_KEY
         },
         body: JSON.stringify(req.body)
       }
     );
 
     console.log('ElevenLabs status:', response.status);
+
     if (!response.ok) {
       const errText = await response.text();
       console.log('ElevenLabs error:', errText);
@@ -94,6 +108,7 @@ app.post('/api/tts/:voiceId', async (req, res) => {
     res.set('Content-Type', 'audio/mpeg');
     res.set('Cache-Control', 'no-cache');
     response.body.pipe(res);
+
   } catch (err) {
     console.error('ElevenLabs error:', err.message);
     res.status(500).json({ error: 'ElevenLabs request failed' });
