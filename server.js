@@ -16,7 +16,7 @@ app.use(express.json({ limit: '1mb' }));
 
 // ── Serve the Sapo app at root ────────────────────────────────────────
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/amiguito-habla-FINAL.html');
+  res.sendFile(__dirname + '/amiguito-habla-end.html');
 });
 
 // ── Health check ──────────────────────────────────────────────────────
