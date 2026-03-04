@@ -19,6 +19,14 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/amiguito-habla-end.html');
 });
 
+// ── Debug ────────────────────────────────────────────────────────────
+app.get('/debug', (req, res) => {
+  res.json({
+    elevenlabs_key_set: !!ELEVENLABS_KEY,
+    elevenlabs_key_prefix: ELEVENLABS_KEY ? ELEVENLABS_KEY.substring(0, 8) + '...' : 'NOT SET'
+  });
+});
+
 // ── Health check ──────────────────────────────────────────────────────
 app.get('/health', (req, res) => {
   res.json({ status: '🐸 Sapo proxy running!', time: new Date().toISOString() });
@@ -61,6 +69,7 @@ app.post('/api/tts/:voiceId', async (req, res) => {
   }
 
   const { voiceId } = req.params;
+  console.log('TTS request for voice:', voiceId);
 
   try {
     const response = await fetch(
@@ -92,4 +101,3 @@ app.post('/api/tts/:voiceId', async (req, res) => {
 app.listen(PORT, () => {
   console.log(`🐸 Sapo proxy listening on port ${PORT}`);
 });
-// force redeploy 
