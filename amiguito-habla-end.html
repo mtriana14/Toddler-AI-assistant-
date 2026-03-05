@@ -402,30 +402,44 @@ body::before {
 <script>
 // ===== HARDCODED — NO SETUP NEEDED =====
 const PROXY_URL    = 'https://toddler-ai-assistant-production.up.railway.app';
-const VOICE_ID     = 'ajOR9IDAaubDK5qtLUqQ'; // Adam — change to any ElevenLabs voice ID
+const VOICE_ID     = 'ajOR9IDAaubDK5qtLUqQ';
 
-const SYSTEM_PROMPT = `Eres Sapo, un amiguito juguetón y cariñoso que habla con niños de 3 años en español latinoamericano (LATAM). Hablas con la calidez de Venezuela, Colombia, México o Argentina.
+const SYSTEM_PROMPT = `Eres Sapo, un compañero educativo y juguetón para niños de 3 años. Hablas en español latinoamericano (LATAM).
 
-REGLAS ABSOLUTAS:
-1. Responde SIEMPRE en máximo 2 oraciones MUY cortas y simples.
-2. Usa SOLO palabras que un niño de 3 años entienda. Sin palabras difíciles.
-3. Sé SÚPER animado: "¡Wooow!", "¡Qué chévere!", "¡Siii!", "¡Bacano!", "¡Eso es!", "¡Genial!"
-4. Añade 1 o 2 emojis al final.
-5. NUNCA digas groserías, temas inapropiados, violencia, ni nada de miedo. Siempre 100% PG.
-6. Si el niño dice algo que no entiendes (habla enredada, palabras inventadas), SIEMPRE responde positivo: "¡Qué cosa más chévere!" o "¡Cuéntame más de eso!"
-7. NUNCA digas que no entendiste. Siempre con entusiasmo.
-8. Da respuestas simples y divertidas.
-9. Elogia al niño siempre: "¡Eres muy listo!", "¡Qué inteligente!", "¡Me encanta hablar contigo!"
-10. Si hacen sonidos de animales, ¡imítalos con palabras!
-11. Para contar, cuenta despacio: "Uno... dos... tres..."
-12. Usa diminutivos cariñosos: "animalito", "colorcito", "poquito".
-13. Tu nombre es Sapo. Eres un sapito verde con gorrito rojo.`;
+═══ MISIÓN ═══
+Enseñar, entretener y acompañar a niños pequeños de forma SEGURA y EDUCATIVA.
+
+═══ REGLAS DE SEGURIDAD — NUNCA VIOLAR ═══
+1. NUNCA uses lenguaje romántico, afectivo o íntimo. PROHIBIDO: "mi amor", "corazón", "cielo", "bebé", "hermoso", "precioso", "lindo", "guapo", "bonito", "cariño", "tesoro", "angelito". SOLO usa "amiguito".
+2. NUNCA hagas comentarios sobre la apariencia física del niño.
+3. NUNCA temas, violencia, contenido adulto, ni nada inapropiado.
+4. NUNCA preguntes información personal (nombre, dirección, familia).
+5. Si el niño dice algo inapropiado, redirige con: "¡Hablemos de algo divertido!"
+
+═══ ESTILO DE RESPUESTA ═══
+6. Máximo 2 oraciones CORTAS y SIMPLES.
+7. Solo vocabulario que un niño de 3 años entienda.
+8. Animado y positivo: "¡Wooow!", "¡Qué chévere!", "¡Siii!", "¡Bacano!", "¡Genial!"
+9. 1 emoji al final.
+10. Elogia SOLO el esfuerzo e ideas: "¡Qué buena pregunta!", "¡Lo lograste!", "¡Eres muy inteligente!"
+
+═══ EDUCACIÓN ═══
+11. Aprovecha cada respuesta para enseñar algo: números, colores, animales, formas, letras.
+12. Para contar: "Uno... dos... tres..." (despacio).
+13. Si imitan sonidos de animales, ¡imítalos y di el nombre del animal!
+14. Usa diminutivos educativos: "animalito", "colorcito", "numerito".
+
+═══ CONTEXTO ═══
+15. Tu nombre es Sapo. Eres un sapito verde con gorrito rojo.
+16. Hoy es {DIA}, {FECHA}. Son las {HORA}.
+17. Si el niño pregunta qué día es o qué hora es, díselo de forma simple y divertida.``;
 
 // ===== STATE =====
 let reconocimiento = null;
 let estaEscuchando = false;
 let estaCargando   = false;
 let audioActual    = null;
+let historial      = []; // conversation memory
 
 // ===== SPEECH RECOGNITION =====
 function configurarReconocimiento() {
@@ -507,8 +521,6 @@ function restaurarBoton() {
 
 // ===== MAIN HANDLER =====
 function handleBtnHabla() {
-  if (estaCargando) return;
-
   // Stop audio if playing
   if (audioActual) {
     audioActual.pause();
@@ -520,33 +532,91 @@ function handleBtnHabla() {
   }
 
   if (estaEscuchando) { pararEscucha(); return; }
-  iniciarEscucha();
+  if (estaCargando) return;
+
+  bootOnFirstTap();
+
+  // iOS Safari: start mic IMMEDIATELY inside gesture, no async
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SR) { setTira('😅 ¡Este navegador no soporta micrófono!', 'error'); return; }
+
+  reconocimiento = new SR();
+  reconocimiento.continuous = false;
+  reconocimiento.interimResults = true;
+  reconocimiento.lang = 'es-419';
+  reconocimiento.maxAlternatives = 5;
+
+  let ultimoInterim = '';
+  let yaEnvio = false;
+
+  reconocimiento.onstart = () => { ultimoInterim = ''; yaEnvio = false; estadoEscuchando(true); };
+
+  reconocimiento.onresult = (e) => {
+    let interim = '', final = '';
+    for (let i = e.resultIndex; i < e.results.length; i++) {
+      if (e.results[i].isFinal) final += e.results[i][0].transcript;
+      else interim += e.results[i][0].transcript;
+    }
+    if (interim) ultimoInterim = interim;
+    if (final && !yaEnvio) {
+      yaEnvio = true;
+      pararEscucha();
+      enviarAIA(final.trim() || 'hola');
+    }
+  };
+
+  reconocimiento.onerror = (e) => {
+    console.log('mic error:', e.error);
+    pararEscucha();
+    if (e.error === 'not-allowed') setTira('🎙️ ¡Necesito permiso del micrófono!', 'error');
+  };
+
+  reconocimiento.onend = () => {
+    if (!yaEnvio && ultimoInterim.trim()) {
+      yaEnvio = true;
+      estaEscuchando = false;
+      estadoEscuchando(false);
+      enviarAIA(ultimoInterim.trim());
+    } else if (estaEscuchando) {
+      pararEscucha();
+    }
+  };
+
+  try { reconocimiento.start(); }
+  catch(e) { console.log('start error:', e); setTira('🎙️ Error al iniciar micrófono', 'error'); }
 }
 
 function iniciarEscucha() {
-  if (!reconocimiento) reconocimiento = configurarReconocimiento();
+  // Always recreate on iOS Safari — it won't reuse the same object
+  reconocimiento = configurarReconocimiento();
   if (!reconocimiento) { setTira('😅 ¡Este navegador no soporta micrófono!', 'error'); return; }
   try { reconocimiento.start(); }
   catch(e) {
-    reconocimiento = configurarReconocimiento();
-    try { reconocimiento.start(); } catch(e2) {}
+    setTimeout(() => {
+      reconocimiento = configurarReconocimiento();
+      try { reconocimiento.start(); } catch(e2) { console.log('mic error', e2); }
+    }, 300);
   }
 }
 
 function pararEscucha() {
   estaEscuchando = false;
-  if (reconocimiento) try { reconocimiento.stop(); } catch(e) {}
+  if (reconocimiento) {
+    try { reconocimiento.stop(); } catch(e) {}
+    reconocimiento = null; // force recreate next time
+  }
   estadoEscuchando(false);
 }
 
 // ===== TOPIC SHORTCUTS =====
 function preguntarTema(texto) {
   if (estaCargando || estaEscuchando) return;
+  booted = true;
   setTira(`👆 Tema elegido`, 'activa');
   enviarAIA(texto);
 }
 
-// ===== CLAUDE API =====
+// ===== OPENAI API + MEMORY + TIME =====
 async function enviarAIA(textoUsuario) {
   estaCargando = true;
   const btn  = document.getElementById('btnHabla');
@@ -560,20 +630,40 @@ async function enviarAIA(textoUsuario) {
   document.getElementById('bocadilloTexto').innerHTML =
     `<div class="puntitos"><span></span><span></span><span></span></div>`;
 
+  // Build time-aware system prompt
+  const ahora = new Date();
+  const dias = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const meses = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const dia = dias[ahora.getDay()];
+  const fecha = `${ahora.getDate()} de ${meses[ahora.getMonth()]} de ${ahora.getFullYear()}`;
+  const hora = ahora.toLocaleTimeString('es-MX', { hour: '2-digit', minute: '2-digit', hour12: true });
+  const systemConTiempo = SYSTEM_PROMPT
+    .replace('{DIA}', dia)
+    .replace('{FECHA}', fecha)
+    .replace('{HORA}', hora);
+
+  // Add user message to history
+  historial.push({ role: 'user', content: textoUsuario });
+
+  // Keep only last 10 messages (~5 min of conversation)
+  if (historial.length > 10) historial = historial.slice(-10);
+
   try {
     const res = await fetch(`${PROXY_URL}/api/chat`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 120,
-        system: SYSTEM_PROMPT,
-        messages: [{ role: 'user', content: textoUsuario }]
+        system: systemConTiempo,
+        messages: historial
       })
     });
 
     const data = await res.json();
-    const respuesta = data?.content?.[0]?.text || '¡Qué chévere! ¡Me encanta hablar contigo! 🌟';
+    const respuesta = data?.content?.[0]?.text || '¡Qué chévere! 🌟';
+
+    // Add assistant response to history
+    historial.push({ role: 'assistant', content: respuesta });
+    if (historial.length > 10) historial = historial.slice(-10);
 
     mostrarTexto(respuesta);
     await hablarConEleven(respuesta);
@@ -683,8 +773,15 @@ function lanzarFiesta() {
 }
 
 // ===== BOOT =====
+let booted = false;
+function bootOnFirstTap() {
+  if (booted) return;
+  booted = true;
+  enviarAIA('hola sapo preséntate muy brevemente en 1 oración');
+}
 window.addEventListener('load', () => {
-  setTimeout(() => enviarAIA('hola sapo preséntate muy brevemente en 1 oración'), 1000);
+  // Show a tap prompt instead of auto-speaking
+  document.getElementById('bocadilloTexto').textContent = '¡Toca el botón rojo para empezar! 🎉';
 });
 </script>
 </body>
