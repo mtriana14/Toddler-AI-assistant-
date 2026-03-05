@@ -330,6 +330,7 @@ body::before {
 <body>
 
 <div class="fiesta-container" id="fiestaContainer"></div>
+<div id="debugBar" style="position:fixed;bottom:0;left:0;right:0;background:#000;color:#0f0;font-size:11px;padding:4px 8px;z-index:99999;display:block;word-break:break-all;max-height:60px;overflow:auto;"></div>
 
 <div class="libro">
   <span class="esquina tl">🌺</span>
@@ -520,7 +521,15 @@ function restaurarBoton() {
 }
 
 // ===== MAIN HANDLER =====
+function dbg(msg) {
+  const el = document.getElementById('debugBar');
+  if (el) el.textContent = new Date().toLocaleTimeString() + ': ' + msg;
+  console.log(msg);
+}
+window.onerror = (msg, src, line) => { dbg('ERROR: ' + msg + ' line:' + line); };
+
 function handleBtnHabla() {
+  dbg('button tapped');
   // Stop audio if playing
   if (audioActual) {
     audioActual.pause();
@@ -538,7 +547,7 @@ function handleBtnHabla() {
 
   // iOS Safari: start mic IMMEDIATELY inside gesture, no async
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-  if (!SR) { setTira('😅 ¡Este navegador no soporta micrófono!', 'error'); return; }
+  dbg('SR available: ' + !!SR); if (!SR) { setTira('😅 ¡Este navegador no soporta micrófono!', 'error'); return; }
 
   reconocimiento = new SR();
   reconocimiento.continuous = false;
@@ -549,7 +558,7 @@ function handleBtnHabla() {
   let ultimoInterim = '';
   let yaEnvio = false;
 
-  reconocimiento.onstart = () => { ultimoInterim = ''; yaEnvio = false; estadoEscuchando(true); };
+  reconocimiento.onstart = () => { dbg('mic started!'); ultimoInterim = ''; yaEnvio = false; estadoEscuchando(true); };
 
   reconocimiento.onresult = (e) => {
     let interim = '', final = '';
@@ -582,8 +591,8 @@ function handleBtnHabla() {
     }
   };
 
-  try { reconocimiento.start(); }
-  catch(e) { console.log('start error:', e); setTira('🎙️ Error al iniciar micrófono', 'error'); }
+  try { dbg('calling start...'); reconocimiento.start(); dbg('start called ok'); }
+  catch(e) { dbg('start error: ' + e.message); setTira('🎙️ Error al iniciar micrófono', 'error'); }
 }
 
 function iniciarEscucha() {
